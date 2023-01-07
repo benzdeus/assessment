@@ -28,10 +28,12 @@ type ExpeneseRepository interface {
 	NewExpenese(expense ExpenseModel) (ExpenseModel, error)
 	GetExpenese(id string) (ExpenseResponse, error)
 	UpdateExpenese(id string, expense ExpenseModel) (ExpenseModel, error)
+	GetExpeneseList() ([]ExpenseResponse, error)
 }
 
 type ExpeneseService interface {
 	NewExpenese(expense ExpenseModel) (ExpenseModel, error)
 	GetExpenese(id string) (ExpenseResponse, error)
 	UpdateExpenese(id string, expense ExpenseModel) (ExpenseModel, error)
+	GetExpeneseList() ([]ExpenseResponse, error)
 }
