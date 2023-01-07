@@ -27,9 +27,11 @@ func (e ExpenseModel) TableName() string {
 type ExpeneseRepository interface {
 	NewExpenese(expense ExpenseModel) (ExpenseModel, error)
 	GetExpenese(id string) (ExpenseResponse, error)
+	UpdateExpenese(id string, expense ExpenseModel) (ExpenseModel, error)
 }
 
 type ExpeneseService interface {
 	NewExpenese(expense ExpenseModel) (ExpenseModel, error)
 	GetExpenese(id string) (ExpenseResponse, error)
+	UpdateExpenese(id string, expense ExpenseModel) (ExpenseModel, error)
 }
