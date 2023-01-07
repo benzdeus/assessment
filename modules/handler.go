@@ -24,6 +24,7 @@ func InitHandlers(db *gorm.DB, engine *echo.Echo) {
 		expensesRoute := engine.Group("/expenses")
 		expensesRoute.POST("", handler.NewExpenese)
 		expensesRoute.GET("/:id", handler.GetExpenese)
+		expensesRoute.PUT("/:id", handler.UpdateExpenese)
 	}
 
 }
@@ -36,6 +37,22 @@ func (h Handler) NewExpenese(c echo.Context) error {
 	}
 
 	expenseRes, err := h.expensesService.NewExpenese(*expense)
+	if err != nil {
+		return c.JSON(400, err)
+
+	}
+	return c.JSON(201, expenseRes)
+}
+
+func (h Handler) UpdateExpenese(c echo.Context) error {
+	id := c.Param("id")
+	expense := new(entities.ExpenseModel)
+
+	if err := c.Bind(&expense); err != nil {
+		return c.JSON(400, err)
+	}
+
+	expenseRes, err := h.expensesService.UpdateExpenese(id, *expense)
 	if err != nil {
 		return c.JSON(400, err)
 
