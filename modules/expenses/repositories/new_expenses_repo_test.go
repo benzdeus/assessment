@@ -1,24 +1,20 @@
-package main
+package repositories_test
 
 import (
-	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"time"
+	"testing"
 
 	"github.com/benzdeus/assessment/db"
+	"github.com/benzdeus/assessment/entities"
 	"github.com/benzdeus/assessment/middlewares"
 	"github.com/benzdeus/assessment/modules"
+	"github.com/benzdeus/assessment/modules/expenses/repositories"
 	"github.com/labstack/echo/v4"
 )
 
-func main() {
-	fmt.Println("Please use server.go for main file")
-	fmt.Println("start at port:", os.Getenv("PORT"))
-
+func TestNewExpenses(t *testing.T) {
 	dbPG, err := db.New()
 	if err != nil {
 		log.Fatal(err)
@@ -28,7 +24,6 @@ func main() {
 	defer sqlDB.Close()
 
 	e := echo.New()
-	// e.Logger.SetLevel(e.Logger.Level())
 	e.Use(middlewares.AuthMiddleware)
 
 	modules.InitHandlers(dbPG, e)
@@ -39,12 +34,22 @@ func main() {
 		}
 	}()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
+	repo := repositories.NewExpeneseRepo(dbPG)
+
+	ex := entities.ExpenseModel{
+		Title:  "strawberry smoothie",
+		Amount: 79,
+		Note:   "night market promotion discount 10 bath",
+		Tags:   &[]string{"food", "beverage"},
 	}
+	res, err := repo.NewExpenese(ex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if res.ID == "" {
+		t.Error(err)
+	}
+
+	defer e.Close()
 }
